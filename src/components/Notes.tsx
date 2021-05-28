@@ -1,49 +1,31 @@
 import React, { ChangeEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  changeNote,
-  changeTitle,
-  deleteNote,
-  reorder,
-  addNote,
-} from "../actions";
-
-import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
+import { changeNote, changeTitle, reorder, addNote } from "../actions";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
-import CachedIcon from "@material-ui/icons/Cached";
-import RadioButtonUncheckedIcon from "@material-ui/icons/RadioButtonUnchecked";
 import {
   DragDropContext,
   Droppable,
-  Draggable,
   DropResult,
   DroppableProvided,
-  DraggableProvided,
 } from "react-beautiful-dnd";
-import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 import AddIcon from "@material-ui/icons/Add";
 import { v4 as uuidv4 } from "uuid";
-import DraggableComponent from "./DraggableComponent";
-import { IState } from "../reducers/reducerInterfaces";
-import { CssNoteField, CssTextField, useStyles } from "./css/MaterialUI";
 import {
-  IconWrapper,
   StyledDroppableCol,
   StyledMainLi,
   StyledMainUl,
-  StyledNote,
-  TrashWrapper,
-  Wrapper,
   StyledTitle,
   StyledCircle,
+  Wrapper,
 } from "./css/styledComponents/StyledNote";
+import DraggableComponent from "./DraggableComponent";
+import { IState } from "../reducers/reducerInterfaces";
 
 const Notes: React.FC = () => {
   const newColumns = useSelector((state: IState) => state.columns);
 
   const dispatch = useDispatch();
-  const classes = useStyles();
 
   const selectColumnName = (name: string): string => {
     const selectedItem = Object.entries(newColumns).find(([key, data]) => {
@@ -51,7 +33,6 @@ const Notes: React.FC = () => {
     }) as Array<any>;
 
     const newSelected = selectedItem[0];
-    console.log(selectedItem);
     return newSelected;
   };
 
@@ -86,7 +67,6 @@ const Notes: React.FC = () => {
     ) {
       return;
     }
-    console.log(result);
     dispatch(
       reorder(
         source.droppableId,
@@ -109,7 +89,7 @@ const Notes: React.FC = () => {
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
       <Wrapper>
-        <StyledCircle></StyledCircle>
+        <StyledCircle />
         <StyledMainUl>
           {Object.entries(newColumns).map(([key, data]) => {
             return (
@@ -124,102 +104,17 @@ const Notes: React.FC = () => {
                       >
                         {data.items.map((el: any, index: number) => {
                           return (
-                            // <DraggableComponent
-                            //   el={el}
-                            //   index={index}
-                            //   key={key}
-                            //   newState={newState}
-                            //   handleTitleInput={handleTitleInput}
-                            //   handleNoteAreaInput={handleNoteAreaInput}
-                            // />
-                            <Draggable
+                            <DraggableComponent
                               key={el.id}
+                              el={el}
+                              status={key}
                               index={index}
-                              draggableId={el.id}
-                            >
-                              {(provided: DraggableProvided) => {
-                                return (
-                                  <div
-                                    ref={provided.innerRef}
-                                    {...provided.draggableProps}
-                                  >
-                                    <StyledNote>
-                                      <CssTextField
-                                        className={classes.margin}
-                                        id="outlined-multiline-static"
-                                        placeholder="Title"
-                                        variant="outlined"
-                                        value={el.title}
-                                        onChange={(e) =>
-                                          handleTitleInput(el.id, key, e)
-                                        }
-                                      />
-                                      <CssNoteField
-                                        className={classes.margin}
-                                        id="outlined-multiline-static"
-                                        // label="Multiline"
-                                        placeholder="Note"
-                                        multiline
-                                        variant="outlined"
-                                        value={el.noteArea}
-                                        onChange={(e) =>
-                                          handleNoteAreaInput(el.id, key, e)
-                                        }
-                                      />
-                                      <TrashWrapper>
-                                        <Tooltip title="Delete Note">
-                                          <IconButton
-                                            onClick={() =>
-                                              dispatch(deleteNote(el.id, key))
-                                            }
-                                          >
-                                            <DeleteOutlineIcon
-                                              aria-label="Delete Note"
-                                              style={{ fill: "gray" }}
-                                            />
-                                          </IconButton>
-                                        </Tooltip>
-                                      </TrashWrapper>
-                                      <IconWrapper
-                                        {...provided.dragHandleProps}
-                                      >
-                                        <Tooltip title="Grab Here">
-                                          {key === "Todo" ? (
-                                            <RadioButtonUncheckedIcon
-                                              aria-label="Grab Here"
-                                              style={{
-                                                fill: "gray",
-                                                fontSize: 18,
-                                              }}
-                                            />
-                                          ) : key === "In Progress" ? (
-                                            <CachedIcon
-                                              aria-label="Grab Here"
-                                              style={{
-                                                fill: "gray",
-                                                fontSize: 20,
-                                              }}
-                                            />
-                                          ) : (
-                                            <CheckCircleOutlineIcon
-                                              aria-label="Grab Here"
-                                              style={{
-                                                fill: "gray",
-                                                fontSize: 20,
-                                              }}
-                                            />
-                                          )}
-                                        </Tooltip>
-                                      </IconWrapper>
-                                    </StyledNote>
-                                  </div>
-                                );
-                              }}
-                            </Draggable>
+                              handleTitleInput={handleTitleInput}
+                              handleNoteAreaInput={handleNoteAreaInput}
+                            />
                           );
                         })}
                         {provided.placeholder}
-
                         <div style={{ margin: "0 auto" }}>
                           <Tooltip title="Add Note">
                             <IconButton onClick={() => handleAddNote(key)}>

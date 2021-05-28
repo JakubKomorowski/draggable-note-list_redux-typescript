@@ -7,25 +7,6 @@ export const Wrapper = styled.div`
   height: 100vh;
 `;
 
-export const StyledNote = styled.div`
-  position: relative;
-  width: 250px;
-  margin: 0 auto;
-  margin-bottom: 20px;
-`;
-
-export const TrashWrapper = styled.div`
-  position: absolute;
-  top: 0;
-  right: 0;
-`;
-
-export const IconWrapper = styled.div`
-  position: absolute;
-  bottom: 12px;
-  right: 15px;
-`;
-
 export const StyledMainUl = styled.ul`
   width: 900px;
   height: auto;
@@ -46,10 +27,11 @@ export const StyledMainLi = styled.li`
 
 export const StyledDroppableCol = styled.div`
   background-color: white;
-  min-height: 500px;
+  height: 550px;
   display: flex;
   flex-direction: column;
   padding: 20px 20px 0 20px;
+  overflow: auto;
 `;
 
 export const StyledTitle = styled.h3`

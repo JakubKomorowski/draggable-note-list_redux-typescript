@@ -1,26 +1,9 @@
 import { actionTypes } from "../actions/actionTypes";
-import { v4 as uuidv4 } from "uuid";
 import { IItem, IState } from "./reducerInterfaces";
-
-const item = {
-  id: uuidv4(),
-  title: "",
-  noteArea: "",
-};
+import { getColumnsFromLocalStorage } from "../utils/localStorageGetters";
 
 const initialState = {
-  columns: {
-    Todo: {
-      items: [item],
-    },
-    "In Progress": {
-      items: [],
-    },
-    Done: {
-      items: [],
-    },
-  },
-
+  columns: getColumnsFromLocalStorage(),
   isAlertOpen: false,
 };
 
@@ -101,13 +84,31 @@ const mainReducer = (state: IState = initialState, action: any) => {
     case actionTypes.REORDER:
       const { idStart, idEnd, indexStart, indexEnd } = payload;
 
-      const newItem = state.columns[idStart].items[indexStart];
-      state.columns[idStart].items.splice(indexStart, 1);
-      state.columns[idEnd].items.splice(indexEnd, 0, newItem);
-
-      return {
-        ...state,
-      };
+      if (idStart === idEnd) {
+        const colStart = state.columns[idStart];
+        const item = colStart.items.splice(indexStart, 1);
+        colStart.items.splice(indexEnd, 0, ...item);
+        return {
+          ...state,
+          columns: {
+            ...state.columns,
+            [idStart]: colStart,
+          },
+        };
+      } else {
+        const colStart = state.columns[idStart];
+        const item = colStart.items.splice(indexStart, 1);
+        const colEnd = state.columns[idEnd];
+        colEnd.items.splice(indexEnd, 0, ...item);
+        return {
+          ...state,
+          columns: {
+            ...state.columns,
+            [idStart]: colStart,
+            [idEnd]: colEnd,
+          },
+        };
+      }
 
     case actionTypes.CLOSE_ALERT:
       return {
